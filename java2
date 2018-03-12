@@ -1,0 +1,103 @@
+package com.example.dadu.a1st;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class MainActivity extends AppCompatActivity
+{
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+           downloadJSON();
+
+
+
+    }
+
+
+    private void downloadJSON()
+    {
+        final String urlWebService="http://10.22.55.163/socket.php";
+
+        class DownloadJSON extends AsyncTask<Void, Void, String>
+        {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                try {
+                    loadIntoListView(s);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            protected String doInBackground(Void... voids) {
+                try {
+                    URL url = new URL(urlWebService);
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    StringBuilder sb = new StringBuilder();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                    String json;
+                    while ((json = bufferedReader.readLine()) != null) {
+                        sb.append(json + "\n");
+                    }
+                    return sb.toString().trim();
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        }
+
+            DownloadJSON getJSON = new DownloadJSON();
+            getJSON.execute();
+
+    }
+
+    private void loadIntoListView(String json) throws JSONException
+    {
+        TextView rest = (TextView)findViewById((R.id.id1));
+        JSONArray jsonArray = new JSONArray(json);
+        String[] stocks = new String[jsonArray.length()];
+        for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject obj = jsonArray.getJSONObject(i);
+            stocks[i] = obj.getString("id")+" "+obj.getString("name");
+
+        }
+        rest.setText(stocks[1]);
+
+
+    }
+    public void onButtonClick(View v)
+    {
+        downloadJSON();
+    }
+
+}
