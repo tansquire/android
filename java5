@@ -136,16 +136,21 @@ public class MainActivity extends AppCompatActivity
         for (int i = 0; i < jsonArray.length(); i++)
         {
             JSONObject obj = jsonArray.getJSONObject(i);
-            stocks[i] = obj.getString("id")+" "+obj.getString("name");
+            stocks[i] = obj.getString("name")+" "+obj.getString("realname");//db col name
 
         }
         rest.setText(stocks[1]);
 
 
     }
-    public void onButtonClick(View v)
+    public void open(View v)
     {
-        open_close("http://10.22.55.163/update.php");
+        open_close("http://10.22.55.163/open.php");
+
+    }
+    public void close(View v)
+    {
+        open_close("http://10.22.55.163/close.php");
 
     }
 
