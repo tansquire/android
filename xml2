@@ -17,16 +17,24 @@
         android:text="@string/textview" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/id2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/id1"
-        android:layout_marginLeft="26dp"
-        android:layout_marginStart="26dp"
-        android:layout_marginTop="146dp"
-        android:onClick="onButtonClick"
-        android:text="@string/button" />
-</RelativeLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="120dp"
+        android:layout_toLeftOf="@+id/id1"
+        android:layout_toStartOf="@+id/id1"
+        android:onClick="open"
+        android:text="@string/open" />
 
+    <Button
+        android:id="@+id/id4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/id2"
+        android:layout_toEndOf="@+id/id1"
+        android:layout_toRightOf="@+id/id1"
+        android:onClick="close"
+        android:text="@string/close" />
+
+</RelativeLayout>
