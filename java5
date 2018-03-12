@@ -4,11 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStream;
@@ -31,19 +29,17 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //downloadJSON();
         updateDisplay();
 
 
     }
 
 
-    private void downloadJSON(final String urlWebService)
+    private void display(final String urlWebService)
     {
 
 
-        class DownloadJSON extends AsyncTask<Void, Void, String>
+        class display extends AsyncTask<Void, Void, String>
         {
 
             @Override
@@ -81,16 +77,16 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-            DownloadJSON getJSON = new DownloadJSON();
-            getJSON.execute();
+        display show_all = new display();
+        show_all.execute();
 
     }
 
-    private void downloadJSON1(final String urlWebService)
+    private void open_close(final String urlWebService)
     {
 
 
-        class DownloadJSON1 extends AsyncTask<Void, Void, String>
+        class open_close extends AsyncTask<Void, Void, String>
         {
 
             @Override
@@ -103,14 +99,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             protected String doInBackground(Void... voids)
             {
-                String data1 = "15";
+                String data1 = "1";
                 try {
                     URL url = new URL(urlWebService);
                     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                     httpURLConnection.setRequestMethod("POST");
                     httpURLConnection.setDoOutput(true);
-
-                    //httpURLConnection.setDoInput(true);
                     OutputStream OS = httpURLConnection.getOutputStream();
                     BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(OS, "UTF-8"));
                     String data = URLEncoder.encode("value", "UTF-8") + "=" + URLEncoder.encode(data1, "UTF-8");
@@ -120,7 +114,6 @@ public class MainActivity extends AppCompatActivity
                     OS.close();
                     InputStream IS = httpURLConnection.getInputStream();
                     IS.close();
-
                     httpURLConnection.disconnect();
                     return "null";
 
@@ -130,8 +123,8 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        DownloadJSON1 getJSON = new DownloadJSON1();
-        getJSON.execute();
+        open_close action = new open_close();
+        action.execute();
 
     }
 
@@ -152,7 +145,7 @@ public class MainActivity extends AppCompatActivity
     }
     public void onButtonClick(View v)
     {
-        downloadJSON1("http://10.22.55.163/update.php");
+        open_close("http://10.22.55.163/update.php");
 
     }
 
@@ -163,7 +156,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run() {
 
-                downloadJSON("http://10.22.55.163/socket.php");
+                display("http://10.22.55.163/socket.php");
             }
 
         },0,5000);//Update text every second
