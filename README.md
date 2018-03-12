@@ -1,1 +1,1 @@
-# android
+required strings.xml
