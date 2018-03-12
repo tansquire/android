@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">1st</string>
+    <string name="name">Name</string>
+    <string name="val">val</string>
+    <string name="textview">TextView</string>
+    <string name="button">Button</string>
+    <string name="open">open</string>
+</resources>
