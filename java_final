@@ -1,5 +1,6 @@
 package com.example.dadu.layout_check;
 
+        import android.content.Context;
         import android.os.AsyncTask;
         import android.os.Bundle;
         import android.support.v7.app.AppCompatActivity;
@@ -163,15 +164,21 @@ public class MainActivity extends AppCompatActivity
             stocks[i] = obj.getString("value");//db col name
 
         }
-        lake_well.setText(stocks[0]);
-        children_park.setText(stocks[1]);
-        stuff_club.setText(stocks[2]);
-        rr_sump.setText(stocks[3]);
+        String lake_well_data = String.format("%.02f", Float.parseFloat(stocks[0]))+" ft";
+        String children_park_data = String.format("%.02f", Float.parseFloat(stocks[1]))+" ft";
+        String stuff_club_data = String.format("%.02f", Float.parseFloat(stocks[2]))+" ft";
+        String rr_sump_data = String.format("%.02f", Float.parseFloat(stocks[3]))+" ft";
+        lake_well.setText(lake_well_data);
+        children_park.setText(children_park_data);
+        stuff_club.setText(stuff_club_data);
+        rr_sump.setText(rr_sump_data);
 
 
     }
     private void loadIntoListView1(String json) throws JSONException
     {
+        String LR;
+        String opdcld;
         TextView remote = (TextView)findViewById((R.id.lr));
         TextView opd_cld = (TextView)findViewById((R.id.oc));
         JSONArray jsonArray = new JSONArray(json);
@@ -182,19 +189,42 @@ public class MainActivity extends AppCompatActivity
             stocks[i] = obj.getString("value");//db col name
 
         }
-        remote.setText(stocks[6]);
-        opd_cld.setText(stocks[7]);
+        if(stocks[2]=="1")
+        LR="IN REMOTE";
+        else LR="IN LOCAL";
+        remote.setText(LR);
+        if (stocks[3]=="1" && stocks[4]=="0")
+            opdcld="FULLY OPENED";
+        else if (stocks[3]=="0" && stocks[4]=="1")
+            opdcld="FULLY CLOSED";
+        else if (stocks[3]=="0" && stocks[4]=="0")
+            opdcld="INTERMEDIATE";
+        else
+            opdcld="NO STATUS";
 
+        opd_cld.setText(opdcld);
 
     }
     public void open(View v)
     {
         open_close("http://10.22.55.163/open.php");
+        Context context = getApplicationContext();
+        CharSequence text = "Open command executed";
+        int duration;
+        duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
 
     }
     public void close(View v)
     {
         open_close("http://10.22.55.163/close.php");
+        Context context = getApplicationContext();
+        CharSequence text = "Close command executed";
+        int duration;
+        duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
 
     }
 
