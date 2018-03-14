@@ -1,9 +1,9 @@
-<?php
-$servername = "localhost";
+ <?php
+$servername = "10.21.160.201";
 $username = "root";
-$password = "123456";
-$dbname = "android";
-$data = $_POST["value"]; 
+$password = "gowsalya";
+$dbname = "scada";
+$data = $_POST["value1"]; 
 //$data = "100"; 
 
 // Create connection
@@ -13,7 +13,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "UPDATE heroes SET realname=$data WHERE id=2";
+$sql = "UPDATE command SET value=$data WHERE id=2";
 
 if ($conn->query($sql) === TRUE) {
     echo "Record updated successfully";
