@@ -1,0 +1,264 @@
+package com.example.dadu.water_network_project;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class MainActivity extends AppCompatActivity
+{
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        //AutoupdateDisplay();
+    }
+
+
+    private void display(final String urlWebService)
+    {
+
+
+        class display extends AsyncTask<Void, Void, String>
+        {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+
+            @Override
+            protected void onPostExecute(String s)
+            {
+                super.onPostExecute(s);
+                if(urlWebService=="http://192.168.0.3/readsensor.php")
+                {
+                    try {
+                        loadIntoListView(s);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if(urlWebService=="http://192.168.0.3/readactuator.php")
+                {
+                    try {
+                        loadIntoListView1(s);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected String doInBackground(Void... voids) {
+                try {
+                    URL url = new URL(urlWebService);
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    StringBuilder sb = new StringBuilder();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                    String json;
+                    while ((json = bufferedReader.readLine()) != null) {
+                        sb.append(json + "\n");
+                    }
+                    return sb.toString().trim();
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        }
+
+        display show_all = new display();
+        show_all.execute();
+
+    }
+
+    private void open_close(final String urlWebService)
+    {
+
+
+        class open_close extends AsyncTask<Void, Void, String>
+        {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+
+
+            @Override
+            protected String doInBackground(Void... voids)
+            {
+                String data1 = "1";
+                try {
+                    URL url = new URL(urlWebService);
+                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                    httpURLConnection.setRequestMethod("POST");
+                    httpURLConnection.setDoOutput(true);
+                    OutputStream OS = httpURLConnection.getOutputStream();
+                    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(OS, "UTF-8"));
+                    String data = URLEncoder.encode("value1", "UTF-8") + "=" + URLEncoder.encode(data1, "UTF-8");//data1 is passed to php as value1
+                    bufferedWriter.write(data);
+                    bufferedWriter.flush();
+                    bufferedWriter.close();
+                    OS.close();
+                    InputStream IS = httpURLConnection.getInputStream();
+                    IS.close();
+                    httpURLConnection.disconnect();
+                    return "null";
+
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        }
+
+        open_close action = new open_close();
+        action.execute();
+
+    }
+
+    private void loadIntoListView(String json) throws JSONException
+    {
+        TextView lake_well = (TextView)findViewById((R.id.lakewell));
+        TextView children_park = (TextView)findViewById((R.id.chpark));
+        TextView stuff_club = (TextView)findViewById((R.id.stuffclub));
+        TextView rr_sump = (TextView)findViewById((R.id.rrsump));
+        JSONArray jsonArray = new JSONArray(json);
+        String[] stocks = new String[jsonArray.length()];
+        for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject obj = jsonArray.getJSONObject(i);
+            stocks[i] = obj.getString("value");//db col name
+
+        }
+        String lake_well_data = String.format("%.02f", Float.parseFloat(stocks[0]))+" ft";
+        String children_park_data = String.format("%.02f", Float.parseFloat(stocks[1]))+" ft";
+        String stuff_club_data = String.format("%.02f", Float.parseFloat(stocks[2]))+" ft";
+        String rr_sump_data = String.format("%.02f", Float.parseFloat(stocks[3]))+" ft";
+        lake_well.setText(lake_well_data);
+        children_park.setText(children_park_data);
+        stuff_club.setText(stuff_club_data);
+        rr_sump.setText(rr_sump_data);
+
+
+    }
+    private void loadIntoListView1(String json) throws JSONException
+    {
+        String LR;
+        String opdcld;
+        TextView remote = (TextView)findViewById((R.id.lr));
+        TextView opd_cld = (TextView)findViewById((R.id.oc));
+        JSONArray jsonArray = new JSONArray(json);
+        String[] stocks = new String[jsonArray.length()];
+        for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject obj = jsonArray.getJSONObject(i);
+            stocks[i] = obj.getString("value");//db col name
+
+        }
+        if(stocks[2]=="1")
+            LR="IN REMOTE";
+        else LR="IN LOCAL";
+        remote.setText(LR);
+        if (stocks[3]=="1" && stocks[4]=="0")
+            opdcld="FULLY OPENED";
+        else if (stocks[3]=="0" && stocks[4]=="1")
+            opdcld="FULLY CLOSED";
+        else if (stocks[3]=="0" && stocks[4]=="0")
+            opdcld="INTERMEDIATE";
+        else
+            opdcld="NO STATUS";
+
+        opd_cld.setText(opdcld);
+
+    }
+    public void open(View v)
+    {
+        open_close("http://192.168.0.3/open.php");
+        Context context = getApplicationContext();
+        CharSequence text = "Open command executed suscessfylly";
+        int duration;
+        duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+
+    }
+    public void close(View v)
+    {
+        open_close("http://192.168.0.3/close.php");
+        Context context = getApplicationContext();
+        CharSequence text = "Close command executed suscessfylly";
+        int duration;
+        duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+
+    }
+
+
+    private void datetime()
+    {
+
+        TextView show_date_time = (TextView)findViewById((R.id.date));
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        show_date_time.setText(currentDateTimeString);
+
+    }
+
+    private void AutoupdateDisplay()
+    {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                datetime();
+                display("http://192.168.0.3/readsensor.php");
+                display("http://192.168.0.3/readactuator.php");
+            }
+
+        }, 0, 5000);//Update text every second
+    }
+
+    public void ButtonupdateDisplay(View v)
+    {
+
+        Context context = getApplicationContext();
+        CharSequence text = "Readings updated successfully";
+        int duration;
+        duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+        datetime();
+        display("http://192.168.0.3/readsensor.php");
+        display("http://192.168.0.3/readactuator.php");
+
+    }
+
+}
+
