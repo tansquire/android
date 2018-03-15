@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity
             protected void onPostExecute(String s)
             {
                 super.onPostExecute(s);
-                if(urlWebService=="http://192.168.0.3/readsensor.php")
+                if(urlWebService=="http://10.22.55.163/readsensor.php")
                 {
                     try {
                         loadIntoListView(s);
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
 
-                if(urlWebService=="http://192.168.0.3/readactuator.php")
+                if(urlWebService=="http://10.22.55.163/readactuator.php")
                 {
                     try {
                         loadIntoListView1(s);
@@ -181,15 +181,16 @@ public class MainActivity extends AppCompatActivity
             stocks[i] = obj.getString("value");//db col name
 
         }
-        if(stocks[2]=="1")
+        if(stocks[2].equals("1"))
             LR="IN REMOTE";
-        else LR="IN LOCAL";
+        else
+         LR="IN LOCAL";
         remote.setText(LR);
-        if (stocks[3]=="1" && stocks[4]=="0")
+        if (stocks[3].equals("1") && stocks[4].equals("0"))
             opdcld="FULLY OPENED";
-        else if (stocks[3]=="0" && stocks[4]=="1")
+        else if (stocks[3].equals("0") && stocks[4].equals("1"))
             opdcld="FULLY CLOSED";
-        else if (stocks[3]=="0" && stocks[4]=="0")
+        else if (stocks[3].equals("0") && stocks[4].equals("0"))
             opdcld="INTERMEDIATE";
         else
             opdcld="NO STATUS";
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity
     }
     public void open(View v)
     {
-        open_close("http://192.168.0.3/open.php");
+        open_close("http://10.22.55.163/open.php");
         Context context = getApplicationContext();
         CharSequence text = "Open command executed suscessfylly";
         int duration;
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity
     }
     public void close(View v)
     {
-        open_close("http://192.168.0.3/close.php");
+        open_close("http://10.22.55.163/close.php");
         Context context = getApplicationContext();
         CharSequence text = "Close command executed suscessfylly";
         int duration;
@@ -238,8 +239,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run() {
                 datetime();
-                display("http://192.168.0.3/readsensor.php");
-                display("http://192.168.0.3/readactuator.php");
+                display("http://10.22.55.163/readsensor.php");
+                display("http://10.22.55.163/readactuator.php");
             }
 
         }, 0, 5000);//Update text every second
@@ -255,8 +256,8 @@ public class MainActivity extends AppCompatActivity
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
         datetime();
-        display("http://192.168.0.3/readsensor.php");
-        display("http://192.168.0.3/readactuator.php");
+        display("http://10.22.55.163/readsensor.php");
+        display("http://10.22.55.163/readactuator.php");
 
     }
 
